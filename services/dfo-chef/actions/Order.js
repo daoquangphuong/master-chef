@@ -31,7 +31,7 @@ module.exports = async function Order(body, name) {
       throw new Error('Not found guest info');
     }
     const plainName = name.trim();
-    const id = moment().format('DD-MM-YYYY');
+    const id = moment().utcOffset('+07:00').format('DD-MM-YYYY');
     const menu = await database.Menu.findOne({ where: { id }, raw: true });
 
     if (!menu) {

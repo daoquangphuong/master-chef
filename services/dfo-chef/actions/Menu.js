@@ -5,7 +5,7 @@ const bot = require('../models/bot');
 module.exports = async function Menu(body, day) {
   try {
     const plainDay = (day || '').trim();
-    const id = (plainDay ? moment(plainDay, 'DD-MM-YYYY') : moment()).format(
+    const id = (plainDay ? moment(plainDay, 'DD-MM-YYYY') : moment().utcOffset('+07:00')).format(
       'DD-MM-YYYY'
     );
     if (id === 'Invalid date') {
