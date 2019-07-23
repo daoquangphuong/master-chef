@@ -3,18 +3,25 @@ const Menu = require('../actions/Menu');
 const Order = require('../actions/Order');
 const Cancel = require('../actions/Cancel');
 const Summary = require('../actions/Summary');
+const Random = require('../actions/Random');
 
 module.exports = function handler(body) {
   const { type, text, channelId } = body;
   if (!text || type !== 'message' || channelId !== 'skype') {
     return;
   }
-  const plainText = text.replace(/dfo-chef/g, '').trim();
+  const plainText = text
+    .replace(
+      process.env.NODE_ENV !== 'production' ? /dfo-chef-dev/g : /dfo-chef/g,
+      ''
+    )
+    .trim();
   const setMenuMatch = plainText.match(/^set-menu\s+([\s\S]+)/im);
   const menuMatch = plainText.match(/^menu(\s+[\s\S]*)?/im);
   const orderMatch = plainText.match(/^order\s+([\s\S]+)$/im);
   const cancelMatch = plainText.match(/^cancel(\s\S)?/im);
   const summaryMatch = plainText.match(/^summary(\s\S)?/im);
+  const randomMatch = plainText.match(/^random(\s\S)?/im);
   if (menuMatch) {
     Menu(body, menuMatch[1]);
   }
@@ -29,5 +36,8 @@ module.exports = function handler(body) {
   }
   if (summaryMatch) {
     Summary(body);
+  }
+  if (randomMatch) {
+    Random(body);
   }
 };

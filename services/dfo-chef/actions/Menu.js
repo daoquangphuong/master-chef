@@ -17,10 +17,18 @@ module.exports = async function Menu(body, day) {
       throw new Error(`Not found menu for ${id}`);
     }
 
+    const commands = [
+      `*Menu* :   Show menu`,
+      `*Order banh gio* :   Order the food "banh gio"`,
+      `*Cancel* :   Cancel all your orders`,
+      `*Summary* :   Show summary of all orders`,
+      `*Random* :   Random guest list`,
+    ];
+
     await bot.sendMessage(body.conversation.id, {
-      text: `Menu:    **${menu.id}** \n${menu.value
+      text: `Menu:    **${menu.id}** \n\n${menu.value
         .map(i => `***${i.name}*** :   *${i.price}k*`)
-        .join('\n')}`
+        .join('\n')}\n\n***Mentions @dfo-chef and use one of the commands***\n\n ${commands.join('\n')}`
     });
   } catch (e) {
     await bot.sendMessage(body.conversation.id, {

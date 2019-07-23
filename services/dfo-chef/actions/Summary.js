@@ -8,7 +8,9 @@ module.exports = async function Summary(body) {
     if (!from) {
       throw new Error('Not found guest info');
     }
-    const id = moment().utcOffset('+07:00').format('DD-MM-YYYY');
+    const id = moment()
+      .utcOffset('+07:00')
+      .format('DD-MM-YYYY');
 
     const orders = await database.Order.findAll({
       where: {
@@ -22,7 +24,7 @@ module.exports = async function Summary(body) {
     let total = 0;
 
     orders.forEach(order => {
-      const key = `**${order.info.food.name}** (*${order.info.food.price}k`;
+      const key = `**${order.info.food.name}** ( *${order.info.food.price}k`;
       sumMap[key] = sumMap[key] || [];
       sumMap[key].push(order);
       total += order.info.food.price;
@@ -30,11 +32,13 @@ module.exports = async function Summary(body) {
 
     const sum = Object.entries(sumMap).map(([name, items]) => {
       return `${name} x ${items.length} = ${items[0].info.food.price *
-        items.length}k*):   ${items.map(i => i.info.guest.name)}`;
+        items.length}k* ):   ${items.map(i => i.info.guest.name).join(', ')}`;
     });
 
     await bot.sendMessage(body.conversation.id, {
-      text: `${sum.join('\n\n')} \n\n TOTAL: ${total}k`
+      text: `Summary:    **${id}** \n\n ${sum.join(
+        '\n\n'
+      )} \n\n **TOTAL:**   ${total}k`
     });
   } catch (e) {
     await bot.sendMessage(body.conversation.id, {

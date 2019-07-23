@@ -25,6 +25,10 @@ const getToken = async () => {
 
   const data = await res.json();
 
+  if (data.error) {
+    console.error(data);
+  }
+
   data.expired_at = Date.now() + (data.expires_in / 2) * 1000;
 
   TOKEN = data;
@@ -37,6 +41,7 @@ const sendMessage = async (
   { type = 'message', text = '' } = {}
 ) => {
   const { access_token: token } = await getToken();
+
   await fetch(
     `https://smba.trafficmanager.net/apis/v3/conversations/${conversationId}/activities`,
     {
