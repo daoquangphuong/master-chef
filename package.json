@@ -1,0 +1,43 @@
+{
+  "name": "dfo-skype-bot",
+  "version": "3.0.0",
+  "private": true,
+  "husky": {
+    "hooks": {
+      "pre-commit": "NODE_ENV=production lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "pretty-quick --staged",
+      "npm run lint",
+      "git add"
+    ]
+  },
+  "scripts": {
+    "lint": "eslint services/dfo-chef/ tools/ --fix",
+    "d-dfo-chef": "node tools/deploy-dfo-chef.js",
+    "deploy": "node tools/deploy-dfo-chef.js"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.15.3",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.12.4",
+    "husky": "^1.3.1",
+    "lint-staged": "^8.1.5",
+    "prettier": "^1.16.4",
+    "pretty-quick": "^1.10.0"
+  },
+  "dependencies": {
+    "dotenv": "^7.0.0",
+    "fs-extra": "^7.0.1",
+    "netrc-rw": "^1.0.0",
+    "node-fetch": "^2.6.0",
+    "webpack": "^4.29.6"
+  }
+}
