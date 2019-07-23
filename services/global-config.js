@@ -8,13 +8,13 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = {
-  skype: {
+  'dfo-chef': {
     port: process.env.SKYPE_PORT || process.env.PORT,
     databaseURL: process.env.SKYPE_DATABASE_URL || process.env.DATABASE_URL,
     domain:
       process.env.NODE_ENV !== 'production'
-        ? 'http://localhost:6973'
-        : 'https://free4talk-browser.herokuapp.com',
+        ? 'http://localhost:7788'
+        : 'https://dfo-chef.herokuapp.com',
     bot: {
       id: process.env.BOT_ID,
       key: process.env.BOT_KEY

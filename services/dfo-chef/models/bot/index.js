@@ -16,8 +16,8 @@ const getToken = async () => {
       method: 'POST',
       body: qs.stringify({
         grant_type: 'client_credentials',
-        client_id: gConfig.skype.bot.id,
-        client_secret: gConfig.skype.bot.key,
+        client_id: gConfig['dfo-chef'].bot.id,
+        client_secret: gConfig['dfo-chef'].bot.key,
         scope: 'https://api.botframework.com/.default'
       })
     }

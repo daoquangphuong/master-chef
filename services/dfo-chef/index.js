@@ -19,15 +19,15 @@ generalRoutes.setting(app);
 app.use(generalRoutes.router);
 
 app.use(
-  '/skype',
-  cors({ origin: [/https:\/\/[^.]+\.free4talk.com$/, gConfig.skype.domain] }),
+  '/dfo-chef',
+  cors({ origin: [/https:\/\/[^.]+\.free4talk.com$/, gConfig['dfo-chef'].domain] }),
   routes
 );
 
-app.listen(gConfig.skype.port, () => {
+app.listen(gConfig['dfo-chef'].port, () => {
   console.info(
-    `You can now view dfo-skype-bot in the browser. \n\n http://localhost:${
-      gConfig.skype.port
+    `You can now view dfo-chef in the browser. \n\n http://localhost:${
+      gConfig['dfo-chef'].port
     } \n`
   );
 });

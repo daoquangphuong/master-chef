@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const pool = require('./pool');
 const gConfig = require('../../../global-config');
 
-module.exports = new Sequelize(gConfig.skype.databaseURL, {
+module.exports = new Sequelize(gConfig['dfo-chef'].databaseURL, {
   define: {
     freezeTableName: true
   },

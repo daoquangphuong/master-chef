@@ -1,9 +1,26 @@
 const fsExtra = require('fs-extra');
+const webpack = require('webpack');
 const path = require('path');
 const cp = require('child_process');
 const netrc = require('netrc-rw');
 const auth = require('./auth');
-// const cloudflare = require('./cloudflare');
+
+function webpackBundle(config) {
+  return new Promise((resolve, reject) => {
+    webpack(config).run((err, stats) => {
+      if (err) {
+        return reject(err);
+      }
+
+      console.info(stats.toString());
+      if (stats.hasErrors()) {
+        return reject(new Error('Webpack compilation errors'));
+      }
+
+      return resolve();
+    });
+  });
+}
 
 const spawn = (command, args, options) =>
   new Promise((resolve, reject) => {
@@ -17,10 +34,46 @@ const spawn = (command, args, options) =>
   });
 
 const root = path.resolve(__dirname, '..');
-const clientPath = path.resolve(root, 'services', 'dfo-chef');
-const buildPath = path.resolve(clientPath, 'build');
+
+const serverPath = path.resolve(root, 'services/dfo-chef');
 const deployPath = path.resolve(root, 'deploy');
-const publicPath = path.resolve(deployPath, 'public');
+
+const webpackConfig = {
+  mode: 'production',
+  target: 'node',
+  node: {
+    console: false,
+    global: false,
+    process: false,
+    __filename: false,
+    __dirname: false,
+    Buffer: false,
+    setImmediate: false
+  },
+  entry: {
+    index: path.resolve(serverPath, 'index.js')
+  },
+  output: {
+    filename: '[name].js',
+    path: path.resolve(deployPath)
+  },
+  devtool: 'source-map',
+  externals: [
+    (context, request, callback) => {
+      if (/^[^./].*$/.test(request)) {
+        return callback(null, `require("${request}");`);
+      }
+      return callback();
+    }
+  ],
+  plugins: [
+    new webpack.BannerPlugin({
+      banner: 'require("source-map-support").install();',
+      raw: true,
+      entryOnly: false
+    })
+  ]
+};
 
 const options = {
   cwd: deployPath,
@@ -35,14 +88,9 @@ const remote = {
 };
 
 async function deploy() {
-  await spawn('yarn', ['install'], { ...options, cwd: clientPath });
-  await spawn('yarn', ['build'], { ...options, cwd: clientPath });
-
   await fsExtra.remove(deployPath);
 
   await fsExtra.ensureDir(deployPath);
-
-  await fsExtra.ensureDir(publicPath);
 
   await spawn('git', ['init', '--quiet'], options);
   // Changing a remote's URL
@@ -99,33 +147,16 @@ async function deploy() {
     fsExtra.removeSync(path.resolve(deployPath, item));
   });
 
-  const excludeClientCopy = [
-    '.git'
-    // 'service-worker.js',
-    // 'asset-manifest.json',
-    // /precache-manifest.*\.js/
-  ];
+  await webpackBundle(webpackConfig);
 
-  fsExtra.readdirSync(buildPath).forEach(item => {
-    const isExclude = excludeClientCopy.some(exclude => {
-      if (exclude instanceof RegExp) {
-        return item.match(exclude);
-      }
-      return exclude === item;
-    });
-    if (isExclude) {
-      return;
-    }
+  const includeServerCopy = ['package.json', 'yarn.lock'];
+
+  includeServerCopy.forEach(item => {
     fsExtra.copySync(
-      path.resolve(buildPath, item),
-      path.resolve(publicPath, item)
+      path.resolve(serverPath, item),
+      path.resolve(deployPath, item)
     );
   });
-
-  fsExtra.copySync(
-    path.resolve(clientPath, 'static.json'),
-    path.resolve(deployPath, 'static.json')
-  );
 
   // Push the contents of the build folder to the remote server via Git
   await spawn('git', ['add', '.', '--all'], options);
@@ -143,11 +174,6 @@ async function deploy() {
     ['push', remote.name, remote.branch, '--set-upstream'],
     options
   );
-
-  // wait 30 seconds then clear the cache
-  // console.info('Wait 30 seconds before clear the cache');
-  // await new Promise(r => setTimeout(r, 30000));
-  // await cloudflare.PurgeAllFiles();
 }
 
 const setAuth = () => {

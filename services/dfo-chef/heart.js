@@ -1,14 +1,21 @@
 const fetch = require('node-fetch');
+const moment = require('moment');
 const gConfig = require('../global-config');
 
 const map = {};
 
-const services = ['skype'];
+const services = ['dfo-chef'];
 
 const isReady = () => Object.keys(map).length === services.length;
 
 const heart = () => {
   const beat = () => {
+    const hour = moment()
+      .utcOffset('+07:00')
+      .format('HH');
+    if (parseInt(hour, 10) > 12 || parseInt(hour, 10) < 6) {
+      return;
+    }
     services.forEach(service => {
       fetch(`${gConfig[service].domain}/${service}/ping`)
         .then(() => {

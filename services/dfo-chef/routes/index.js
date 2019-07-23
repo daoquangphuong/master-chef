@@ -15,7 +15,7 @@ router.use(bodyParser.json());
 
 router.use(syncDatabase);
 
-router.post('/dfo-chef', handleIncomingMessages);
+router.post('/listener', handleIncomingMessages);
 
 // error handler
 router.use(error);
