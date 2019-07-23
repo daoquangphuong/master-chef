@@ -9,8 +9,8 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = {
   'dfo-chef': {
-    port: process.env.SKYPE_PORT || process.env.PORT,
-    databaseURL: process.env.SKYPE_DATABASE_URL || process.env.DATABASE_URL,
+    port: process.env.DFO_CHEF_PORT || process.env.PORT,
+    databaseURL: process.env.DFO_CHEF_DATABASE_URL || process.env.DATABASE_URL,
     domain:
       process.env.NODE_ENV !== 'production'
         ? 'http://localhost:7788'
