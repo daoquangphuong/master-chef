@@ -97,7 +97,7 @@ module.exports = async function Order(body, name) {
           name: food.name,
           price: food.price
         },
-        quality: 1
+        quantity: 1
       }
     });
 
