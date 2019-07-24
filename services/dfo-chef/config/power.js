@@ -4,10 +4,12 @@ const ME =
   process.env.NODE_ENV !== 'production'
     ? '29:1E95biWo8G5zINZ1vsgTXpTs1ii8bLO47ZmGuqh5l0hY'
     : '29:1r0qCEmujxuyrWfFWM9MfrroGxuQmbsFQeXhR-FSwah8';
+const HANH = '29:1Duwxnk57zeo20uPB13GZk-RK2OYHVgQfkB2eMACSxaE';
 
 const powerMap = {
   [ADMIN]: {
-    [ME]: true
+    [ME]: true,
+    [HANH]: true
   }
 };
 

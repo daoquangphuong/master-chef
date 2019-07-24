@@ -2,6 +2,7 @@ const moment = require('moment');
 const stringSimilarity = require('string-similarity');
 const database = require('../models/database');
 const bot = require('../models/bot');
+const { isAdmin } = require('../config/power');
 
 function removeUnicode(inputStr) {
   let str = inputStr;
@@ -30,8 +31,18 @@ module.exports = async function Order(body, name) {
     if (!from) {
       throw new Error('Not found guest info');
     }
+    const mentionedUser = bot.getMentionedUsers(body)[0];
+    if (mentionedUser) {
+      if (!isAdmin(from.id)) {
+        throw new Error('Require admin permission to order for other person');
+      }
+      from.id = mentionedUser.mentioned.id;
+      from.name = mentionedUser.mentioned.name;
+    }
     const plainName = name.trim();
-    const id = moment().utcOffset('+07:00').format('DD-MM-YYYY');
+    const id = moment()
+      .utcOffset('+07:00')
+      .format('DD-MM-YYYY');
     const menu = await database.Menu.findOne({ where: { id }, raw: true });
 
     if (!menu) {
@@ -63,7 +74,7 @@ module.exports = async function Order(body, name) {
 
     if (lastOrder) {
       throw new Error(
-        `You've already ordered "${
+        `**${lastOrder.info.guest.name}** has already ordered "${
           lastOrder.info.food.name
         }". Please cancel it before order new one.`
       );

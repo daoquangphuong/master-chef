@@ -4,13 +4,15 @@ const Order = require('../actions/Order');
 const Cancel = require('../actions/Cancel');
 const Summary = require('../actions/Summary');
 const Random = require('../actions/Random');
+const bot = require('../models/bot');
 
 module.exports = function handler(body) {
   const { type, text, channelId } = body;
   if (!text || type !== 'message' || channelId !== 'skype') {
     return;
   }
-  const plainText = text
+  const plainText = bot
+    .getPlainText(body)
     .replace(
       process.env.NODE_ENV !== 'production' ? /dfo-chef-dev/g : /dfo-chef/g,
       ''

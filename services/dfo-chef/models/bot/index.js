@@ -4,6 +4,9 @@ const gConfig = require('../../../global-config');
 
 let TOKEN;
 
+const botName =
+  process.env.NODE_ENV !== 'production' ? 'dfo-chef-dev' : 'dfo-chef';
+
 const getToken = async () => {
   if (TOKEN && Date.now() < TOKEN.expired_at) {
     return TOKEN;
@@ -58,7 +61,42 @@ const sendMessage = async (
   );
 };
 
+const getPlainText = body => {
+  const {
+    entities,
+    channelData: { text }
+  } = body;
+
+  let plainText = text;
+  entities.forEach(entity => {
+    if (entity.type === 'mention') {
+      while (plainText.indexOf(entity.text) > -1) {
+        plainText = plainText.replace(entity.text, '');
+      }
+    }
+  });
+
+  return plainText;
+};
+
+const getMentionedUsers = body => {
+  const { entities } = body;
+  return entities
+    .filter(
+      entity => entity.type === 'mention' && entity.text.indexOf(botName) < 0
+    )
+    .map(entity => ({
+      ...entity,
+      mentioned: {
+        ...entity.mentioned,
+        name: entity.text.match(/">(.+?)<\//)[1]
+      }
+    }));
+};
+
 module.exports = {
   getToken,
-  sendMessage
+  sendMessage,
+  getPlainText,
+  getMentionedUsers
 };

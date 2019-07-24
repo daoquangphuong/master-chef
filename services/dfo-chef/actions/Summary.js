@@ -22,12 +22,14 @@ module.exports = async function Summary(body) {
     const sumMap = {};
 
     let total = 0;
+    let quality = 0;
 
     orders.forEach(order => {
       const key = `**${order.info.food.name}** ( *${order.info.food.price}k`;
       sumMap[key] = sumMap[key] || [];
       sumMap[key].push(order);
       total += order.info.food.price;
+      quality += order.info.quality;
     });
 
     const sum = Object.entries(sumMap).map(([name, items]) => {
@@ -38,7 +40,7 @@ module.exports = async function Summary(body) {
     await bot.sendMessage(body.conversation.id, {
       text: `Summary:    **${id}** \n\n ${sum.join(
         '\n\n'
-      )} \n\n **TOTAL:**   ${total}k`
+      )} \n\n **QUALITY:**   ${quality}\n **TOTAL:**       ${total}k`
     });
   } catch (e) {
     await bot.sendMessage(body.conversation.id, {
