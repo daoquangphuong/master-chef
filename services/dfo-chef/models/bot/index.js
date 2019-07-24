@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const moment = require('moment');
 const qs = require('querystring');
 const gConfig = require('../../../global-config');
 
@@ -94,9 +95,19 @@ const getMentionedUsers = body => {
     }));
 };
 
+const isOrderExpired = () => {
+  const now = moment().utcOffset('+07:00');
+  const expiredTime = moment()
+    .utcOffset('+07:00')
+    .startOf('day')
+    .hour(10);
+  return now.isAfter(expiredTime);
+};
+
 module.exports = {
   getToken,
   sendMessage,
   getPlainText,
-  getMentionedUsers
+  getMentionedUsers,
+  isOrderExpired,
 };

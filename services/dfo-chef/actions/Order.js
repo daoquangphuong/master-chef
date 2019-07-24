@@ -31,6 +31,11 @@ module.exports = async function Order(body, name) {
     if (!from) {
       throw new Error('Not found guest info');
     }
+    if (bot.isOrderExpired()) {
+      if (!isAdmin(from.id)) {
+        throw new Error('The order time is expired please contact Admin');
+      }
+    }
     const mentionedUser = bot.getMentionedUsers(body)[0];
     if (mentionedUser) {
       if (!isAdmin(from.id)) {
