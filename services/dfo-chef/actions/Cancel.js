@@ -41,7 +41,7 @@ module.exports = async function Cancel(body) {
     });
 
     await bot.sendMessage(body.conversation.id, {
-      text: `All orders from **${from.name}**' are cancelled`
+      text: `All orders from **${from.name}** are cancelled`
     });
   } catch (e) {
     await bot.sendMessage(body.conversation.id, {

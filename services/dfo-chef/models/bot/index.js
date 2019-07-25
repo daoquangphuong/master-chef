@@ -42,7 +42,7 @@ const getToken = async () => {
 
 const sendMessage = async (
   conversationId,
-  { type = 'message', text = '' } = {}
+  { type = 'message', text = '', ...other } = {}
 ) => {
   const { access_token: token } = await getToken();
 
@@ -50,13 +50,14 @@ const sendMessage = async (
     `https://smba.trafficmanager.net/apis/v3/conversations/${conversationId}/activities`,
     {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
       method: 'POST',
       body: JSON.stringify({
         type,
-        text
+        text,
+        ...other
       })
     }
   );
@@ -109,5 +110,5 @@ module.exports = {
   sendMessage,
   getPlainText,
   getMentionedUsers,
-  isOrderExpired,
+  isOrderExpired
 };

@@ -4,9 +4,8 @@ const bot = require('../models/bot');
 
 module.exports = async function Menu(body, day) {
   try {
-    const plainDay = (day || '').trim();
-    const id = (plainDay
-      ? moment(plainDay, 'DD-MM-YYYY')
+    const id = (day
+      ? moment(day, 'DD-MM-YYYY')
       : moment().utcOffset('+07:00')
     ).format('DD-MM-YYYY');
     if (id === 'Invalid date') {
@@ -20,7 +19,7 @@ module.exports = async function Menu(body, day) {
 
     const commands = `
 **Menu**                 :   Show menu ( **M** for short )
-**Order** *food name*    :   Order the food ( **O** for short )
+**Order**                :   Order the food ( **O** for short )
 **Cancel**               :   Cancel all your orders ( **C** for short )
 **Summary**              :   Show summary of all orders ( **S** for short )
 **Random**               :   Random guest list ( **R** for short )

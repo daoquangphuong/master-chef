@@ -44,7 +44,6 @@ module.exports = async function Order(body, name) {
       from.id = mentionedUser.mentioned.id;
       from.name = mentionedUser.mentioned.name;
     }
-    const plainName = name.trim();
     const id = moment()
       .utcOffset('+07:00')
       .format('DD-MM-YYYY');
@@ -54,9 +53,25 @@ module.exports = async function Order(body, name) {
       throw new Error(`Not found menu for ${id}`);
     }
 
+    if (!name && !mentionedUser) {
+      await bot.sendMessage(body.conversation.id, {
+        text: `Hi *${from.name}*, please order the food.\n...`,
+        inputHint: 'expectingInput',
+        suggestedActions: {
+          to: [body.from.id],
+          actions: menu.value.map(i => ({
+            type: 'imBack',
+            title: `${i.name} ${i.price}k`,
+            value: `order ${i.name}`
+          }))
+        }
+      });
+      return;
+    }
+
     menu.value.forEach(item => {
       item.rate = stringSimilarity.compareTwoStrings(
-        removeUnicode(plainName),
+        removeUnicode(name),
         removeUnicode(item.name)
       );
     });
@@ -69,7 +84,7 @@ module.exports = async function Order(body, name) {
     );
 
     if (food.notFound) {
-      throw new Error(`Not found the food "${plainName}"`);
+      throw new Error(`Not found the food "${name}"`);
     }
 
     const lastOrder = await database.Order.findOne({

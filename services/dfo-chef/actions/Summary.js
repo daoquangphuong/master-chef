@@ -2,15 +2,16 @@ const moment = require('moment');
 const database = require('../models/database');
 const bot = require('../models/bot');
 
-module.exports = async function Summary(body) {
+module.exports = async function Summary(body, day) {
   try {
     const { from } = body;
     if (!from) {
       throw new Error('Not found guest info');
     }
-    const id = moment()
-      .utcOffset('+07:00')
-      .format('DD-MM-YYYY');
+    const id = (day
+      ? moment(day, 'DD-MM-YYYY')
+      : moment().utcOffset('+07:00')
+    ).format('DD-MM-YYYY');
 
     const orders = await database.Order.findAll({
       where: {
