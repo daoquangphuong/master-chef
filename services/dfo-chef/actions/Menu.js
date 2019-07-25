@@ -5,9 +5,10 @@ const bot = require('../models/bot');
 module.exports = async function Menu(body, day) {
   try {
     const plainDay = (day || '').trim();
-    const id = (plainDay ? moment(plainDay, 'DD-MM-YYYY') : moment().utcOffset('+07:00')).format(
-      'DD-MM-YYYY'
-    );
+    const id = (plainDay
+      ? moment(plainDay, 'DD-MM-YYYY')
+      : moment().utcOffset('+07:00')
+    ).format('DD-MM-YYYY');
     if (id === 'Invalid date') {
       throw new Error('Invalid date (DD-MM-YYYY)');
     }
@@ -17,18 +18,20 @@ module.exports = async function Menu(body, day) {
       throw new Error(`Not found menu for ${id}`);
     }
 
-    const commands = [
-      `*Menu* :   Show menu`,
-      `*Order banh gio* :   Order the food "banh gio"`,
-      `*Cancel* :   Cancel all your orders`,
-      `*Summary* :   Show summary of all orders`,
-      `*Random* :   Random guest list`,
-    ];
+    const commands = `
+**Menu**                 :   Show menu ( **M** for short )
+**Order** *food name*    :   Order the food ( **O** for short )
+**Cancel**               :   Cancel all your orders ( **C** for short )
+**Summary**              :   Show summary of all orders ( **S** for short )
+**Random**               :   Random guest list ( **R** for short )
+`.trim();
 
     await bot.sendMessage(body.conversation.id, {
       text: `Menu:    **${menu.id}** \n\n${menu.value
         .map(i => `***${i.name}*** :   *${i.price}k*`)
-        .join('\n')}\n\n***Mentions @dfo-chef and use one of the commands***\n\n ${commands.join('\n')}`
+        .join(
+          '\n'
+        )}\n\n***Mentions @dfo-chef and use one of the commands***\n\n${commands}`
     });
   } catch (e) {
     await bot.sendMessage(body.conversation.id, {
