@@ -4,13 +4,14 @@ const bot = require('../models/bot');
 
 module.exports = async function Summary(body) {
   try {
-    const id = moment()
+    const day = moment()
       .utcOffset('+07:00')
       .format('DD-MM-YYYY');
-
+    const groupId = body.conversation.id;
     const orders = await database.Order.findAll({
       where: {
-        day: id
+        groupId,
+        day
       },
       raw: true
     });
@@ -24,7 +25,7 @@ module.exports = async function Summary(body) {
     });
 
     await bot.sendMessage(body.conversation.id, {
-      text: `Random:   **${id}**\n\n${orders
+      text: `Random:   **${day}**\n\n${orders
         .map(i => `**${i.info.guest.name}**:   *${i.score}*`)
         .join('\n')}`
     });
