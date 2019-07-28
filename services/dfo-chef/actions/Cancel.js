@@ -24,18 +24,23 @@ module.exports = async function Cancel(body) {
       from.id = mentionedUser.mentioned.id;
       from.name = mentionedUser.mentioned.name;
     }
-    const id = moment()
+    const day = moment()
       .utcOffset('+07:00')
       .format('DD-MM-YYYY');
-    const menu = await database.Menu.findOne({ where: { id }, raw: true });
+    const groupId = body.conversation.id;
+    const menu = await database.Menu.findOne({
+      where: { groupId, day },
+      raw: true
+    });
 
     if (!menu) {
-      throw new Error(`Not found menu for ${id}`);
+      throw new Error(`Not found menu for ${day}`);
     }
 
     await database.Order.destroy({
       where: {
-        day: id,
+        groupId,
+        day,
         guestId: from.id
       }
     });
