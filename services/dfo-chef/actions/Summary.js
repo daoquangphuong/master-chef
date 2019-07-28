@@ -2,20 +2,22 @@ const moment = require('moment');
 const database = require('../models/database');
 const bot = require('../models/bot');
 
-module.exports = async function Summary(body, day) {
+module.exports = async function Summary(body, dayText) {
   try {
     const { from } = body;
     if (!from) {
       throw new Error('Not found guest info');
     }
-    const id = (day
-      ? moment(day, 'DD-MM-YYYY')
+    const day = (dayText
+      ? moment(dayText, 'DD-MM-YYYY')
       : moment().utcOffset('+07:00')
     ).format('DD-MM-YYYY');
 
+    const groupId = body.conversation.id;
     const orders = await database.Order.findAll({
       where: {
-        day: id
+        groupId,
+        day
       },
       raw: true
     });
@@ -39,7 +41,7 @@ module.exports = async function Summary(body, day) {
     });
 
     await bot.sendMessage(body.conversation.id, {
-      text: `Summary:    **${id}** \n\n ${sum.join(
+      text: `Summary:    **${day}** \n\n ${sum.join(
         '\n\n'
       )} \n\n **QUANTITY:**   ${quantity}\n **TOTAL:**       ${total}k`
     });

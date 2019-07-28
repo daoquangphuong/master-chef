@@ -9,15 +9,15 @@ module.exports = async function SetMenu(body, menuText) {
       throw new Error('Require admin permission');
     }
     const lines = bot.getLines(menuText);
-    const [dayInput, ...menusInput] = lines;
-    const day = moment(dayInput, 'DD-MM-YYYY').format('DD-MM-YYYY');
+    const [dayText, ...menuListText] = lines;
+    const day = moment(dayText, 'DD-MM-YYYY').format('DD-MM-YYYY');
     if (day === 'Invalid date') {
       throw new Error('Invalid date (DD-MM-YYYY)');
     }
-    if (!menusInput.length) {
+    if (!menuListText.length) {
       throw new Error('Please input at least a food');
     }
-    const foods = menusInput.map(menu => {
+    const foods = menuListText.map(menu => {
       const [name, price] = menu.split(':');
       if (!name || !name.trim()) {
         throw new Error('Not found food name');

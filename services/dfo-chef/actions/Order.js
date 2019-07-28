@@ -44,13 +44,17 @@ module.exports = async function Order(body, name) {
       from.id = mentionedUser.mentioned.id;
       from.name = mentionedUser.mentioned.name;
     }
-    const id = moment()
+    const day = moment()
       .utcOffset('+07:00')
       .format('DD-MM-YYYY');
-    const menu = await database.Menu.findOne({ where: { id }, raw: true });
+    const groupId = body.conversation.id;
+    const menu = await database.Menu.findOne({
+      where: { groupId, day },
+      raw: true
+    });
 
     if (!menu) {
-      throw new Error(`Not found menu for ${id}`);
+      throw new Error(`Not found menu for ${day}`);
     }
 
     if (!name && !mentionedUser) {
@@ -88,7 +92,7 @@ module.exports = async function Order(body, name) {
     }
 
     const lastOrder = await database.Order.findOne({
-      where: { day: id, guestId: from.id },
+      where: { groupId, day, guestId: from.id },
       raw: true
     });
 
@@ -101,7 +105,8 @@ module.exports = async function Order(body, name) {
     }
 
     await database.Order.create({
-      day: id,
+      groupId,
+      day,
       guestId: from.id,
       info: {
         guest: {
