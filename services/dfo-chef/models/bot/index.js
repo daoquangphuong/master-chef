@@ -81,6 +81,17 @@ const getPlainText = body => {
   return plainText;
 };
 
+const getLines = text => {
+  const lines = [];
+  (text || '').split('\n').forEach(item => {
+    const line = item.trim();
+    if (line) {
+      lines.push(line);
+    }
+  });
+  return lines;
+};
+
 const getMentionedUsers = body => {
   const { entities } = body;
   return entities
@@ -108,6 +119,7 @@ const isOrderExpired = () => {
 module.exports = {
   getToken,
   sendMessage,
+  getLines,
   getPlainText,
   getMentionedUsers,
   isOrderExpired

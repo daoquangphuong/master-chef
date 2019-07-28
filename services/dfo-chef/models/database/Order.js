@@ -9,6 +9,12 @@ module.exports = sequelize.define(
       autoIncrement: true,
       primaryKey: true
     },
+    groupId: {
+      type: DataType.STRING,
+      validate: {
+        notEmpty: true
+      }
+    },
     day: {
       type: DataType.STRING,
       validate: {
@@ -31,7 +37,7 @@ module.exports = sequelize.define(
     indexes: [
       {
         unique: true,
-        fields: ['id', 'guestId']
+        fields: ['groupId', 'day', 'guestId']
       }
     ]
   }

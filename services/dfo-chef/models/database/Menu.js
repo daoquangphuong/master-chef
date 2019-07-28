@@ -5,8 +5,18 @@ module.exports = sequelize.define(
   'Menu',
   {
     id: {
+      type: DataType.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
+    groupId: {
       type: DataType.STRING,
-      primaryKey: true,
+      validate: {
+        notEmpty: true
+      }
+    },
+    day: {
+      type: DataType.STRING,
       validate: {
         notEmpty: true
       }
@@ -18,6 +28,11 @@ module.exports = sequelize.define(
   },
 
   {
-    indexes: []
+    indexes: [
+      {
+        unique: true,
+        fields: ['groupId', 'day']
+      }
+    ]
   }
 );

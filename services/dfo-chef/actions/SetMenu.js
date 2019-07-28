@@ -8,19 +8,16 @@ module.exports = async function SetMenu(body, menuText) {
     if (!isAdmin(body && body.from && body.from.id)) {
       throw new Error('Require admin permission');
     }
-    const lines = menuText
-      .split('\n')
-      .map(i => i.trim())
-      .filter(i => i);
-    const [day, ...menus] = lines;
-    const id = moment(day, 'DD-MM-YYYY').format('DD-MM-YYYY');
-    if (id === 'Invalid date') {
+    const lines = bot.getLines(menuText);
+    const [dayInput, ...menusInput] = lines;
+    const day = moment(dayInput, 'DD-MM-YYYY').format('DD-MM-YYYY');
+    if (day === 'Invalid date') {
       throw new Error('Invalid date (DD-MM-YYYY)');
     }
-    if (!menus.length) {
+    if (!menusInput.length) {
       throw new Error('Please input at least a food');
     }
-    const foods = menus.map(menu => {
+    const foods = menusInput.map(menu => {
       const [name, price] = menu.split(':');
       if (!name || !name.trim()) {
         throw new Error('Not found food name');
@@ -33,20 +30,25 @@ module.exports = async function SetMenu(body, menuText) {
         price: parseInt(price.trim(), 10)
       };
     });
+    const groupId = body.conversation.id;
     await database.Menu.create(
       {
-        id,
+        groupId,
+        day,
         value: foods
       },
       {
         ignoreDuplicates: true
       }
     );
-    await database.Menu.update({ value: foods }, { where: { id } });
-    const menu = await database.Menu.findOne({ where: { id }, raw: true });
+    await database.Menu.update({ value: foods }, { where: { groupId, day } });
+    const menu = await database.Menu.findOne({
+      where: { groupId, day },
+      raw: true
+    });
 
     await bot.sendMessage(body.conversation.id, {
-      text: `Set-Menu:    **${menu.id}** \n${menu.value
+      text: `Set-Menu:    **${menu.day}** \n${menu.value
         .map(i => `***${i.name}*** :   *${i.price}k*`)
         .join('\n')}`
     });
