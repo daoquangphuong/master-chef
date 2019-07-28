@@ -1,3 +1,4 @@
+const Help = require('../actions/Help');
 const SetMenu = require('../actions/SetMenu');
 const Menu = require('../actions/Menu');
 const Order = require('../actions/Order');
@@ -50,6 +51,7 @@ module.exports = function handler(body) {
       break;
     }
     default: {
+      Help(body);
       break;
     }
   }
