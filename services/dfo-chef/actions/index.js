@@ -1,4 +1,5 @@
 const Help = require('../actions/Help');
+const GenSetMenu = require('../actions/GenSetMenu');
 const SetMenu = require('../actions/SetMenu');
 const Menu = require('../actions/Menu');
 const Order = require('../actions/Order');
@@ -23,6 +24,11 @@ module.exports = function handler(body) {
     case 'set-menu':
     case 'sm': {
       SetMenu(body, params);
+      break;
+    }
+    case 'gen-set-menu':
+    case 'gsm': {
+      GenSetMenu(body, params);
       break;
     }
     case 'menu':

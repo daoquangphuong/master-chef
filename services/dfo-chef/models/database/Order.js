@@ -36,7 +36,6 @@ module.exports = sequelize.define(
   {
     indexes: [
       {
-        unique: true,
         fields: ['groupId', 'day', 'guestId']
       }
     ]

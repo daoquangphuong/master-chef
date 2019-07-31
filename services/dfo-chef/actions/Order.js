@@ -91,19 +91,6 @@ module.exports = async function Order(body, name) {
       throw new Error(`Not found the food "${name}"`);
     }
 
-    const lastOrder = await database.Order.findOne({
-      where: { groupId, day, guestId: from.id },
-      raw: true
-    });
-
-    if (lastOrder) {
-      throw new Error(
-        `**${lastOrder.info.guest.name}** has already ordered "${
-          lastOrder.info.food.name
-        }". Please cancel it before order new one.`
-      );
-    }
-
     await database.Order.create({
       groupId,
       day,
@@ -121,8 +108,15 @@ module.exports = async function Order(body, name) {
       }
     });
 
+    const orders = await database.Order.findAll({
+      where: { groupId, day, guestId: from.id },
+      raw: true
+    });
+
     await bot.sendMessage(body.conversation.id, {
-      text: `**${from.name}** ordered **${food.name}**   (*${food.price}k*)`
+      text: `**${from.name}** ordered:${orders
+        .map(i => `\n**${i.info.food.name}** *(${i.info.food.price}k)*`)
+        .join('')}`
     });
   } catch (e) {
     await bot.sendMessage(body.conversation.id, {
