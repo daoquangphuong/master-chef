@@ -31,28 +31,32 @@ module.exports = async function Summary(body, dayText) {
       const key = `**${order.info.food.name}** ( *${order.info.food.price}k`;
       sumMap[key] = sumMap[key] || [];
       sumMap[key].push(order);
-      total += order.info.food.price;
-      quantity += order.info.quantity || 1;
+      if (order.info.food.price) {
+        total += order.info.food.price;
+        quantity += order.info.quantity || 1;
+      }
     });
 
     const sum = Object.entries(sumMap)
       .filter(([, items]) => items[0].info.food.price)
       .map(([name, items]) => {
-        return `${name} x ${items.length} = ${items[0].info.food.price *
+        return `\n\n${name} x ${items.length} = ${items[0].info.food.price *
           items.length}k* ):   ${items.map(i => i.info.guest.name).join(', ')}`;
       });
 
     const sumExtra = Object.entries(sumMap)
       .filter(([, items]) => !items[0].info.food.price)
       .map(([name, items]) => {
-        return `${name} x ${items.length} = ${items[0].info.food.price *
+        return `\n\n${name} x ${items.length} = ${items[0].info.food.price *
           items.length}k* ):   ${items.map(i => i.info.guest.name).join(', ')}`;
       });
 
     await bot.sendMessage(body.conversation.id, {
-      text: `Summary:    **${day}** \n\n ${sum.join(
+      text: `Summary:    **${day}**${sum.join(
         '\n\n'
-      )} \n\n **QUANTITY:**   ${quantity}\n **TOTAL:**       ${total}k\n\n**EXTRA**\n${sumExtra}`
+      )} \n\n **QUANTITY:**   ${quantity}\n **TOTAL:**       ${total}k${
+        sumExtra.length ? ` \n\n**EXTRA**\n${sumExtra.join('')}` : ''
+      }`
     });
 
     const printMap = {};
@@ -66,16 +70,16 @@ module.exports = async function Summary(body, dayText) {
     const print = Object.entries(printMap)
       .filter(([, items]) => items[0].info.food.price)
       .map(([name, items]) => {
-        return `${name}   :   ${items.length}`;
+        return `\n${name}   :   ${items.length}`;
       });
     const printExtra = Object.entries(printMap)
       .filter(([, items]) => !items[0].info.food.price)
       .map(([name, items]) => {
-        return `${name}   :   ${items.length}`;
+        return `\n${name}   :   ${items.length}`;
       });
 
     await bot.sendMessage(body.conversation.id, {
-      text: `**${day}**\n${print.join('\n')}\n\n${printExtra}`
+      text: `Order:   **${day}**${print.join('')}\n\n${printExtra.join('')}`
     });
   } catch (e) {
     await bot.sendMessage(body.conversation.id, {
