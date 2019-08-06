@@ -16,17 +16,25 @@ module.exports = async function Summary(body) {
       raw: true
     });
 
-    orders.forEach(order => {
-      order.score = parseInt(Math.random() * 100, 10);
-    });
+    const userMap = orders.reduce((map, order) => {
+      if (!map[order.guestId] && order.info.food.price) {
+        map[order.guestId] = {
+          score: parseInt(Math.random() * 100, 10),
+          guest: order.info.guest
+        };
+      }
+      return map;
+    }, {});
 
-    orders.sort((a, b) => {
+    const users = Object.values(userMap);
+
+    users.sort((a, b) => {
       return a.score - b.score;
     });
 
     await bot.sendMessage(body.conversation.id, {
       text: `Random:   **${day}**\n\n${orders
-        .map(i => `**${i.info.guest.name}**:   *${i.score}*`)
+        .map(i => `**${i.guest.name}**:   *${i.score}*`)
         .join('\n')}`
     });
   } catch (e) {
