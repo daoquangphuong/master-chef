@@ -33,7 +33,7 @@ module.exports = async function Summary(body) {
     });
 
     await bot.sendMessage(body.conversation.id, {
-      text: `Random:   **${day}**\n\n${orders
+      text: `Random:   **${day}**\n\n${users
         .map(i => `**${i.guest.name}**:   *${i.score}*`)
         .join('\n')}`
     });
