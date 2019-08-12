@@ -20,9 +20,11 @@ module.exports = async function Summary(body) {
       if (!map[order.guestId] && order.info.food.price) {
         map[order.guestId] = {
           score: parseInt(Math.random() * 100, 10),
-          guest: order.info.guest
+          guest: order.info.guest,
+          total: 0,
         };
       }
+      map[order.guestId].total += order.info.food.price;
       return map;
     }, {});
 
@@ -34,7 +36,7 @@ module.exports = async function Summary(body) {
 
     await bot.sendMessage(body.conversation.id, {
       text: `Random:   **${day}**\n\n${users
-        .map(i => `**${i.guest.name}**:   *${i.score}*`)
+        .map(i => `**${i.guest.name}** *(${i.total}k)*:   *${i.score}*`)
         .join('\n')}`
     });
   } catch (e) {
