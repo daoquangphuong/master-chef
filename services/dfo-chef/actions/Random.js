@@ -17,7 +17,10 @@ module.exports = async function Summary(body) {
     });
 
     const userMap = orders.reduce((map, order) => {
-      if (!map[order.guestId] && order.info.food.price) {
+      if(!order.info.food.price){
+        return map;
+      }
+      if (!map[order.guestId]) {
         map[order.guestId] = {
           score: parseInt(Math.random() * 100, 10),
           guest: order.info.guest,
