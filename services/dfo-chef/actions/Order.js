@@ -75,8 +75,8 @@ module.exports = async function Order(body, name) {
 
     menu.value.forEach(item => {
       item.rate = stringSimilarity.compareTwoStrings(
-        removeUnicode(name),
-        removeUnicode(item.name)
+        removeUnicode(name).replace(/-/g, ' '),
+        removeUnicode(item.name).replace(/-/g, ' ')
       );
     });
 
