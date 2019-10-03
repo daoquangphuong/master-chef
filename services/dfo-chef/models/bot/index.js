@@ -109,11 +109,34 @@ const getMentionedUsers = body => {
 
 const isOrderExpired = () => {
   const now = moment().utcOffset('+07:00');
+
   const expiredTime = moment()
     .utcOffset('+07:00')
     .startOf('day')
-    .hour(10);
-  return now.isAfter(expiredTime);
+    .hour(8);
+
+  const startedTime = moment()
+    .utcOffset('+07:00')
+    .startOf('day')
+    .hour(12);
+
+  return now.isAfter(expiredTime) && now.isBefore(startedTime);
+};
+
+const getOrderDay = (dayText) => {
+  if(dayText){
+    return moment(dayText, 'DD-MM-YYYY').format('DD-MM-YYYY')
+  }
+  const now = moment().utcOffset('+07:00');
+  const startedTime = moment()
+    .utcOffset('+07:00')
+    .startOf('day')
+    .hour(12);
+
+  if(now.isAfter(startedTime)){
+    return now.add(1, 'day').format('DD-MM-YYYY')
+  }
+  return now.format('DD-MM-YYYY')
 };
 
 module.exports = {
@@ -122,5 +145,6 @@ module.exports = {
   getLines,
   getPlainText,
   getMentionedUsers,
-  isOrderExpired
+  isOrderExpired,
+  getOrderDay
 };

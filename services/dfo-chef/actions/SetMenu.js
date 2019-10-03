@@ -10,7 +10,10 @@ module.exports = async function SetMenu(body, menuText) {
     }
     const lines = bot.getLines(menuText);
     const [dayText, ...menuListText] = lines;
-    const day = moment(dayText, 'DD-MM-YYYY').format('DD-MM-YYYY');
+    if(!dayText){
+      throw new Error('Missing day');
+    }
+    const day = bot.getOrderDay(dayText);
     if (day === 'Invalid date') {
       throw new Error('Invalid date (DD-MM-YYYY)');
     }

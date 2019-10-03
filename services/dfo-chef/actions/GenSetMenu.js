@@ -1,4 +1,3 @@
-const moment = require('moment');
 const database = require('../models/database');
 const bot = require('../models/bot');
 const { isAdmin } = require('../config/power');
@@ -8,7 +7,10 @@ module.exports = async function AddFood(body, dayText) {
     if (!isAdmin(body && body.from && body.from.id)) {
       throw new Error('Require admin permission');
     }
-    const day = moment(dayText, 'DD-MM-YYYY').format('DD-MM-YYYY');
+    if(!dayText){
+      throw new Error('Missing day');
+    }
+    const day = bot.getOrderDay(dayText);
     if (day === 'Invalid date') {
       throw new Error('Invalid date (DD-MM-YYYY)');
     }

@@ -1,4 +1,3 @@
-const moment = require('moment');
 const database = require('../models/database');
 const bot = require('../models/bot');
 const { isAdmin } = require('../config/power');
@@ -24,9 +23,7 @@ module.exports = async function Cancel(body) {
       from.id = mentionedUser.mentioned.id;
       from.name = mentionedUser.mentioned.name;
     }
-    const day = moment()
-      .utcOffset('+07:00')
-      .format('DD-MM-YYYY');
+    const day = bot.getOrderDay();
     const groupId = body.conversation.id;
     const menu = await database.Menu.findOne({
       where: { groupId, day },

@@ -1,12 +1,9 @@
-const moment = require('moment');
 const database = require('../models/database');
 const bot = require('../models/bot');
 
 module.exports = async function Summary(body) {
   try {
-    const day = moment()
-      .utcOffset('+07:00')
-      .format('DD-MM-YYYY');
+    const day = bot.getOrderDay();
     const groupId = body.conversation.id;
     const orders = await database.Order.findAll({
       where: {

@@ -1,13 +1,10 @@
-const moment = require('moment');
 const database = require('../models/database');
 const bot = require('../models/bot');
 
 module.exports = async function Menu(body, dayText) {
   try {
-    const day = (dayText
-      ? moment(dayText, 'DD-MM-YYYY')
-      : moment().utcOffset('+07:00')
-    ).format('DD-MM-YYYY');
+    const day = bot.getOrderDay(dayText);
+
     if (day === 'Invalid date') {
       throw new Error('Invalid date (DD-MM-YYYY)');
     }
