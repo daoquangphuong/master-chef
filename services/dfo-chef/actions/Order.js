@@ -108,7 +108,7 @@ module.exports = async function Order(body, nameInfo) {
 
     if (isExtra) {
       if (extraFood.notFound || !extra) {
-        throw new Error(`Not found the extra food "${extra}"`);
+        throw new Error(`Not found the extra food "${extra || ''}". To order extra food please use '${name} - name of extra food'`);
       } else {
         food.name = `${food.name} - ${extraFood.name}`
       }
