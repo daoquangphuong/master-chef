@@ -1,7 +1,7 @@
 const stringSimilarity = require('string-similarity');
 const database = require('../models/database');
 const bot = require('../models/bot');
-const { isAdmin } = require('../config/power');
+const {isAdmin} = require('../config/power');
 
 function removeUnicode(inputStr) {
   let str = inputStr;
@@ -24,9 +24,9 @@ function removeUnicode(inputStr) {
   return str;
 }
 
-module.exports = async function Order(body, name) {
+module.exports = async function Order(body, nameInfo) {
   try {
-    const { from } = body;
+    const {from} = body;
     if (!from) {
       throw new Error('Not found guest info');
     }
@@ -46,7 +46,7 @@ module.exports = async function Order(body, name) {
     const day = bot.getOrderDay();
     const groupId = body.conversation.id;
     const menu = await database.Menu.findOne({
-      where: { groupId, day },
+      where: {groupId, day},
       raw: true
     });
 
@@ -54,7 +54,7 @@ module.exports = async function Order(body, name) {
       throw new Error(`Not found menu for ${day}`);
     }
 
-    if (!name && !mentionedUser) {
+    if (!nameInfo && !mentionedUser) {
       await bot.sendMessage(body.conversation.id, {
         text: `Hi *${from.name}*, please order the food.\n...`,
         inputHint: 'expectingInput',
@@ -70,9 +70,15 @@ module.exports = async function Order(body, name) {
       return;
     }
 
+    const [name, extra] = nameInfo.split('-').map(i => (i || '').trim());
+
     menu.value.forEach(item => {
       item.rate = stringSimilarity.compareTwoStrings(
         removeUnicode(name).replace(/-/g, ' '),
+        removeUnicode(item.name).replace(/-/g, ' ')
+      );
+      item.extraRate = stringSimilarity.compareTwoStrings(
+        removeUnicode(extra || '').replace(/-/g, ' '),
         removeUnicode(item.name).replace(/-/g, ' ')
       );
     });
@@ -81,11 +87,31 @@ module.exports = async function Order(body, name) {
       (max, item) => {
         return max.rate < item.rate ? item : max;
       },
-      { notFound: true, rate: 0 }
+      {notFound: true, rate: 0}
+    );
+
+    const extraFood = menu.value.reduce(
+      (max, item) => {
+        if (item.price < 35) {
+          return max;
+        }
+        return max.extraRate < item.extraRate ? item : max;
+      },
+      {notFound: true, extraRate: 0}
     );
 
     if (food.notFound) {
       throw new Error(`Not found the food "${name}"`);
+    }
+
+    const isExtra = food.name === 'Món ăn thêm';
+
+    if (isExtra) {
+      if (extraFood.notFound || !extra) {
+        throw new Error(`Not found the extra food "${extra}"`);
+      } else {
+        food.name = `${food.name} - ${extraFood.name}`
+      }
     }
 
     await database.Order.create({
@@ -106,7 +132,7 @@ module.exports = async function Order(body, name) {
     });
 
     const orders = await database.Order.findAll({
-      where: { groupId, day, guestId: from.id },
+      where: {groupId, day, guestId: from.id},
       raw: true
     });
 
