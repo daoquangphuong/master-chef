@@ -40,11 +40,11 @@ module.exports = async function History(body, dayText) {
       }
     });
 
-    guestList.sort((a,b) => b.score - a.score);
+    guestList.sort((a, b) => b.score - a.score);
 
     await bot.sendMessage(body.conversation.id, {
       text: `History From:   **${day}**\n\n${guestList
-        .map(i => `**${i.name}**:   *${i.score}*`)
+        .map((i, idx) => `${idx + 1}. **${i.name}**:   *${i.score}*`)
         .join('\n')}`
     });
 
