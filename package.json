@@ -17,7 +17,8 @@
   "scripts": {
     "lint": "eslint services/dfo-chef/ tools/ --fix",
     "d-dfo-chef": "node tools/deploy-dfo-chef.js",
-    "deploy": "node tools/deploy-dfo-chef.js"
+    "deploy": "node tools/deploy-dfo-chef.js",
+    "restore": "dropdb master-chef && createdb master-chef && pg_restore -d master-chef ~/Downloads/master-chef --no-owner"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

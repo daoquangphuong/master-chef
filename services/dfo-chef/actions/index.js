@@ -6,6 +6,7 @@ const Order = require('../actions/Order');
 const Cancel = require('../actions/Cancel');
 const Summary = require('../actions/Summary');
 const Random = require('../actions/Random');
+const History = require('../actions/History');
 const bot = require('../models/bot');
 
 module.exports = function handler(body) {
@@ -54,6 +55,11 @@ module.exports = function handler(body) {
     case 'random':
     case 'r': {
       Random(body, params);
+      break;
+    }
+    case 'history':
+    case 'h': {
+      History(body, params);
       break;
     }
     default: {

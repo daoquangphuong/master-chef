@@ -139,6 +139,10 @@ const getOrderDay = (dayText) => {
   return now.format('DD-MM-YYYY')
 };
 
+const dayToMoment = (dayText) => {
+  return moment(dayText, 'DD-MM-YYYY');
+};
+
 module.exports = {
   getToken,
   sendMessage,
@@ -146,5 +150,6 @@ module.exports = {
   getPlainText,
   getMentionedUsers,
   isOrderExpired,
-  getOrderDay
+  getOrderDay,
+  dayToMoment
 };
