@@ -90,11 +90,14 @@ module.exports = async function Order(body, nameInfo) {
       {notFound: true, rate: 0}
     );
 
+    const extraFoodList = [];
+
     const extraFood = menu.value.reduce(
       (max, item) => {
         if (item.price < 35) {
           return max;
         }
+        extraFoodList.push(item);
         return max.extraRate < item.extraRate ? item : max;
       },
       {notFound: true, extraRate: 0}
@@ -108,10 +111,21 @@ module.exports = async function Order(body, nameInfo) {
 
     if (isExtra) {
       if (extraFood.notFound || !extra) {
-        throw new Error(`Not found the extra food "${extra || ''}". To order the extra food please use '${name} - name of extra food'`);
-      } else {
-        food.name = `${food.name} - ${extraFood.name}`
+        await bot.sendMessage(body.conversation.id, {
+          text: `Hi *${from.name}*, please choose the extra food.\n...`,
+          inputHint: 'expectingInput',
+          suggestedActions: {
+            to: [body.from.id],
+            actions: extraFoodList.map(i => ({
+              type: 'imBack',
+              title: `${i.name} ${food.price}k`,
+              value: `order ${food.name} - ${i.name}`
+            }))
+          }
+        });
+        return;
       }
+        food.name = `${food.name} - ${extraFood.name}`
     }
 
     await database.Order.create({
