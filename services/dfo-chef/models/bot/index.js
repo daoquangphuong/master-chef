@@ -113,7 +113,7 @@ const isOrderExpired = () => {
   const expiredTime = moment()
     .utcOffset('+07:00')
     .startOf('day')
-    .hour(8);
+    .hour(20);
 
   const startedTime = moment()
     .utcOffset('+07:00')
