@@ -55,7 +55,10 @@ class ComBui {
       menu.push({
         id: parseInt(id, 10),
         head,
-        foods: content.split('|').map(i => i.trim())
+        foods: content
+          .split('|')
+          .map(i => i.trim())
+          .filter(i => i)
       });
     });
 

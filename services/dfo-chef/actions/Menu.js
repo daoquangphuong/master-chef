@@ -32,8 +32,8 @@ module.exports = async function Menu(body, dayText) {
     await bot.sendMessage(body.conversation.id, {
       text: `Cơm Bụi online Thứ ${dayOfWeek} ngày **${
         menu.day
-      }** \nPhần ăn bao gồm các món sau:\n\n${comBuiMenu.foods
-        .map((i, idx) => `${idx}. ***${i}***`)
+      }** \nPhần ăn bao gồm các món sau:\n${comBuiMenu.foods
+        .map((i, idx) => `***${idx + 1}. ${i}***`)
         .join('\n')}`
     });
   } catch (e) {
