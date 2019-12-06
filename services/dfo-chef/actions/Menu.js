@@ -30,7 +30,7 @@ module.exports = async function Menu(body, dayText) {
     const comBuiMenu = await supplier.comBui.getMenu(dayOfWeek);
 
     await bot.sendMessage(body.conversation.id, {
-      text: `Cơm Bụi online Thứ ${dayOfWeek} ngày **${
+      text: `Cơm bụi online Thứ **${dayOfWeek}** ngày **${
         menu.day
       }** \nPhần ăn bao gồm các món sau:\n${comBuiMenu.foods
         .map((i, idx) => `***${idx + 1}. ${i}***`)
