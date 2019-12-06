@@ -1,5 +1,6 @@
 const database = require('../models/database');
 const bot = require('../models/bot');
+const supplier = require('../models/supplier');
 
 module.exports = async function Menu(body, dayText) {
   try {
@@ -21,6 +22,18 @@ module.exports = async function Menu(body, dayText) {
     await bot.sendMessage(body.conversation.id, {
       text: `Menu:    **${menu.day}** \n\n${menu.value
         .map(i => `***${i.name}*** :   *${i.price}k*`)
+        .join('\n')}`
+    });
+
+    const dayOfWeek = bot.dayToMoment(day).day() + 1;
+
+    const comBuiMenu = await supplier.comBui.getMenu(dayOfWeek);
+
+    await bot.sendMessage(body.conversation.id, {
+      text: `Cơm Bụi online Thứ ${dayOfWeek} ngày **${
+        menu.day
+      }** \nPhần ăn bao gồm các món sau:\n\n${comBuiMenu.foods
+        .map((i, idx) => `${idx}. ***${i}***`)
         .join('\n')}`
     });
   } catch (e) {
