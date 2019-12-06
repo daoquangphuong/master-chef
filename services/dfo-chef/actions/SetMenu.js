@@ -1,4 +1,3 @@
-const moment = require('moment');
 const database = require('../models/database');
 const bot = require('../models/bot');
 const { isAdmin } = require('../config/power');
