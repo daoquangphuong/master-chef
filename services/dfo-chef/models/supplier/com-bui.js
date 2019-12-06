@@ -53,7 +53,7 @@ class ComBui {
         .replace(/[\n\r]/g, '');
       const id = head.match(/\d/)[0];
       menu.push({
-        id,
+        id: parseInt(id, 10),
         head,
         foods: content.split('|').map(i => i.trim())
       });
@@ -66,7 +66,7 @@ class ComBui {
 const getMenu = async dayOfWeek => {
   const comBui = new ComBui();
   const menu = await comBui.getMenu();
-  return menu.find(i => i.id === dayOfWeek);
+  return menu.find(i => i.id === parseInt(dayOfWeek, 10));
 };
 
 module.exports = {
