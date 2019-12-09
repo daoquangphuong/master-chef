@@ -13,7 +13,7 @@ const heart = () => {
     const hour = moment()
       .utcOffset('+07:00')
       .format('HH');
-    if (parseInt(hour, 10) >= 18 || parseInt(hour, 10) < 6) {
+    if (parseInt(hour, 10) >= 21 || parseInt(hour, 10) < 12) {
       return;
     }
     services.forEach(service => {
