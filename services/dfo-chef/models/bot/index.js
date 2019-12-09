@@ -120,12 +120,12 @@ const isOrderExpired = () => {
     .startOf('day')
     .hour(12);
 
-  return now.isAfter(expiredTime) && now.isBefore(startedTime);
+  return now.isAfter(expiredTime) || now.isBefore(startedTime);
 };
 
-const getOrderDay = (dayText) => {
-  if(dayText){
-    return moment(dayText, 'DD-MM-YYYY').format('DD-MM-YYYY')
+const getOrderDay = dayText => {
+  if (dayText) {
+    return moment(dayText, 'DD-MM-YYYY').format('DD-MM-YYYY');
   }
   const now = moment().utcOffset('+07:00');
   const startedTime = moment()
@@ -133,13 +133,13 @@ const getOrderDay = (dayText) => {
     .startOf('day')
     .hour(12);
 
-  if(now.isAfter(startedTime)){
-    return now.add(1, 'day').format('DD-MM-YYYY')
+  if (now.isAfter(startedTime)) {
+    return now.add(1, 'day').format('DD-MM-YYYY');
   }
-  return now.format('DD-MM-YYYY')
+  return now.format('DD-MM-YYYY');
 };
 
-const dayToMoment = (dayText) => {
+const dayToMoment = dayText => {
   return moment(dayText, 'DD-MM-YYYY');
 };
 
