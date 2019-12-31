@@ -2,6 +2,7 @@ const Help = require('../actions/Help');
 const GenSetMenu = require('../actions/GenSetMenu');
 const SetMenu = require('../actions/SetMenu');
 const Menu = require('../actions/Menu');
+const DelMenu = require('../actions/DelMenu');
 const Order = require('../actions/Order');
 const Cancel = require('../actions/Cancel');
 const Summary = require('../actions/Summary');
@@ -35,6 +36,11 @@ module.exports = function handler(body) {
     case 'menu':
     case 'm': {
       Menu(body, params);
+      break;
+    }
+    case 'del-menu':
+    case 'dm': {
+      DelMenu(body, params);
       break;
     }
     case 'order':
