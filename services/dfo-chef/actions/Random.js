@@ -1,10 +1,13 @@
 const database = require('../models/database');
 const bot = require('../models/bot');
+const helper = require('../models/helper');
 
 module.exports = async function Summary(body) {
   try {
-    const day = bot.getOrderDay();
     const groupId = body.conversation.id;
+
+    const { day } = await helper.getMenuInfo(groupId);
+
     const orders = await database.Order.findAll({
       where: {
         groupId,
@@ -14,14 +17,14 @@ module.exports = async function Summary(body) {
     });
 
     const userMap = orders.reduce((map, order) => {
-      if(!order.info.food.price){
+      if (!order.info.food.price) {
         return map;
       }
       if (!map[order.guestId]) {
         map[order.guestId] = {
           score: parseInt(Math.random() * 100, 10),
           guest: order.info.guest,
-          total: 0,
+          total: 0
         };
       }
       map[order.guestId].total += order.info.food.price;

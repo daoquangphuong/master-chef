@@ -139,6 +139,12 @@ const getOrderDay = dayText => {
   return now.format('DD-MM-YYYY');
 };
 
+const getNextDay = dayText => {
+  return moment(dayText, 'DD-MM-YYYY')
+    .add(1, 'day')
+    .format('DD-MM-YYYY');
+};
+
 const dayToMoment = dayText => {
   return moment(dayText, 'DD-MM-YYYY');
 };
@@ -151,5 +157,6 @@ module.exports = {
   getMentionedUsers,
   isOrderExpired,
   getOrderDay,
+  getNextDay,
   dayToMoment
 };

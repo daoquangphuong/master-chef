@@ -1,7 +1,8 @@
 const stringSimilarity = require('string-similarity');
 const database = require('../models/database');
 const bot = require('../models/bot');
-const {isAdmin} = require('../config/power');
+const helper = require('../models/helper');
+const { isAdmin } = require('../config/power');
 
 function removeUnicode(inputStr) {
   let str = inputStr;
@@ -26,14 +27,9 @@ function removeUnicode(inputStr) {
 
 module.exports = async function Order(body, nameInfo) {
   try {
-    const {from} = body;
+    const { from } = body;
     if (!from) {
       throw new Error('Not found guest info');
-    }
-    if (bot.isOrderExpired()) {
-      if (!isAdmin(from.id)) {
-        throw new Error('The order time is expired please contact Admin');
-      }
     }
     const mentionedUser = bot.getMentionedUsers(body)[0];
     if (mentionedUser) {
@@ -43,15 +39,17 @@ module.exports = async function Order(body, nameInfo) {
       from.id = mentionedUser.mentioned.id;
       from.name = mentionedUser.mentioned.name;
     }
-    const day = bot.getOrderDay();
     const groupId = body.conversation.id;
-    const menu = await database.Menu.findOne({
-      where: {groupId, day},
-      raw: true
-    });
+    const { day, menu, isAnotherDay } = await helper.getMenuInfo(groupId);
 
     if (!menu) {
       throw new Error(`Not found menu for ${day}`);
+    }
+
+    if (bot.isOrderExpired() && !isAnotherDay) {
+      if (!isAdmin(from.id)) {
+        throw new Error('The order time is expired please contact Admin');
+      }
     }
 
     if (!nameInfo && !mentionedUser) {
@@ -87,7 +85,7 @@ module.exports = async function Order(body, nameInfo) {
       (max, item) => {
         return max.rate < item.rate ? item : max;
       },
-      {notFound: true, rate: 0}
+      { notFound: true, rate: 0 }
     );
 
     const extraFoodList = [];
@@ -100,7 +98,7 @@ module.exports = async function Order(body, nameInfo) {
         extraFoodList.push(item);
         return max.extraRate < item.extraRate ? item : max;
       },
-      {notFound: true, extraRate: 0}
+      { notFound: true, extraRate: 0 }
     );
 
     if (food.notFound) {
@@ -125,7 +123,7 @@ module.exports = async function Order(body, nameInfo) {
         });
         return;
       }
-        food.name = `${food.name} - ${extraFood.name}`
+      food.name = `${food.name} - ${extraFood.name}`;
     }
 
     await database.Order.create({
@@ -146,7 +144,7 @@ module.exports = async function Order(body, nameInfo) {
     });
 
     const orders = await database.Order.findAll({
-      where: {groupId, day, guestId: from.id},
+      where: { groupId, day, guestId: from.id },
       raw: true
     });
 

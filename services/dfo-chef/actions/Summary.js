@@ -1,5 +1,6 @@
 const database = require('../models/database');
 const bot = require('../models/bot');
+const helper = require('../models/helper');
 
 module.exports = async function Summary(body, dayText) {
   try {
@@ -7,13 +8,11 @@ module.exports = async function Summary(body, dayText) {
     if (!from) {
       throw new Error('Not found guest info');
     }
-    const day = bot.getOrderDay(dayText);
-
-    if (day === 'Invalid date') {
-      throw new Error('Invalid date (DD-MM-YYYY)');
-    }
 
     const groupId = body.conversation.id;
+
+    const { day } = await helper.getMenuInfo(groupId, dayText);
+
     const orders = await database.Order.findAll({
       where: {
         groupId,

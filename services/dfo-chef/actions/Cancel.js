@@ -1,5 +1,6 @@
 const database = require('../models/database');
 const bot = require('../models/bot');
+const helper = require('../models/helper');
 const { isAdmin } = require('../config/power');
 
 module.exports = async function Cancel(body) {
@@ -7,11 +8,6 @@ module.exports = async function Cancel(body) {
     const { from } = body;
     if (!from) {
       throw new Error('Not found guest info');
-    }
-    if (bot.isOrderExpired()) {
-      if (!isAdmin(from.id)) {
-        throw new Error('The order time is expired please contact Admin');
-      }
     }
     const mentionedUser = bot.getMentionedUsers(body)[0];
     if (mentionedUser) {
@@ -23,15 +19,17 @@ module.exports = async function Cancel(body) {
       from.id = mentionedUser.mentioned.id;
       from.name = mentionedUser.mentioned.name;
     }
-    const day = bot.getOrderDay();
     const groupId = body.conversation.id;
-    const menu = await database.Menu.findOne({
-      where: { groupId, day },
-      raw: true
-    });
+    const { day, menu, isAnotherDay } = await helper.getMenuInfo(groupId);
 
     if (!menu) {
       throw new Error(`Not found menu for ${day}`);
+    }
+
+    if (bot.isOrderExpired() && !isAnotherDay) {
+      if (!isAdmin(from.id)) {
+        throw new Error('The order time is expired please contact Admin');
+      }
     }
 
     await database.Order.destroy({

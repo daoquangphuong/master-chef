@@ -1,20 +1,11 @@
-const database = require('../models/database');
 const bot = require('../models/bot');
+const helper = require('../models/helper');
 const supplier = require('../models/supplier');
 
 module.exports = async function Menu(body, dayText) {
   try {
-    const day = bot.getOrderDay(dayText);
-
-    if (day === 'Invalid date') {
-      throw new Error('Invalid date (DD-MM-YYYY)');
-    }
-
     const groupId = body.conversation.id;
-    const menu = await database.Menu.findOne({
-      where: { groupId, day },
-      raw: true
-    });
+    const { day, menu } = await helper.getMenuInfo(groupId, dayText);
     if (!menu) {
       throw new Error(`Not found menu for ${day}`);
     }
