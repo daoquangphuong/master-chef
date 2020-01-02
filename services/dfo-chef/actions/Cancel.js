@@ -10,8 +10,10 @@ module.exports = async function Cancel(body) {
       throw new Error('Not found guest info');
     }
     const mentionedUser = bot.getMentionedUsers(body)[0];
+    const adminPower = isAdmin(from.id);
+
     if (mentionedUser) {
-      if (!isAdmin(from.id)) {
+      if (adminPower) {
         throw new Error(
           'Require admin permission to cancel the orders of this person'
         );
@@ -27,7 +29,7 @@ module.exports = async function Cancel(body) {
     }
 
     if (bot.isOrderExpired() && !isAnotherDay) {
-      if (!isAdmin(from.id)) {
+      if (adminPower) {
         throw new Error('The order time is expired please contact Admin');
       }
     }

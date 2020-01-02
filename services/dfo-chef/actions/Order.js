@@ -32,8 +32,10 @@ module.exports = async function Order(body, nameInfo) {
       throw new Error('Not found guest info');
     }
     const mentionedUser = bot.getMentionedUsers(body)[0];
+    const adminPower = isAdmin(from.id);
+
     if (mentionedUser) {
-      if (!isAdmin(from.id)) {
+      if (!adminPower) {
         throw new Error('Require admin permission to order for other person');
       }
       from.id = mentionedUser.mentioned.id;
@@ -47,7 +49,7 @@ module.exports = async function Order(body, nameInfo) {
     }
 
     if (bot.isOrderExpired() && !isAnotherDay) {
-      if (!isAdmin(from.id)) {
+      if (!adminPower) {
         throw new Error('The order time is expired please contact Admin');
       }
     }
