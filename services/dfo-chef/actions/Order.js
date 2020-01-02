@@ -25,7 +25,7 @@ function removeUnicode(inputStr) {
   return str;
 }
 
-module.exports = async function Order(body, nameInfo) {
+module.exports = async function Order(body, nameInput) {
   try {
     const { from } = body;
     if (!from) {
@@ -53,6 +53,9 @@ module.exports = async function Order(body, nameInfo) {
         throw new Error('The order time is expired please contact Admin');
       }
     }
+
+    const nameInfo =
+      !nameInput && menu.value.length === 1 ? menu.value[0].name : nameInput;
 
     if (!nameInfo && !mentionedUser) {
       await bot.sendMessage(body.conversation.id, {
