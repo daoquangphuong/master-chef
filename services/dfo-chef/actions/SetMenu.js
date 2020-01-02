@@ -8,9 +8,23 @@ module.exports = async function SetMenu(body, menuText) {
       throw new Error('Require admin permission');
     }
     const lines = bot.getLines(menuText);
-    const [dayText, ...menuListText] = lines;
-    if(!dayText){
+    const [dayInfo, ...menuListText] = lines;
+    const [dayText, next] = dayInfo.split(' ');
+    if (!dayText) {
       throw new Error('Missing day');
+    }
+    const loopNext = parseInt((next || '').trim(), 10);
+    if (loopNext) {
+      let seq = Promise.resolve();
+      for (let i = 0; i < loopNext; i += 1) {
+        seq = seq.then(() => {
+          return SetMenu(
+            body,
+            [bot.getNextDay(dayText, i), ...menuListText].join('\n')
+          );
+        });
+      }
+      return seq;
     }
     const day = bot.getOrderDay(dayText);
     if (day === 'Invalid date') {

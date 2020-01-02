@@ -125,7 +125,7 @@ const isOrderExpired = () => {
 
 const getOrderDay = dayText => {
   if (dayText) {
-    return moment(dayText, 'DD-MM-YYYY').format('DD-MM-YYYY');
+    return moment(dayText.trim(), 'DD-MM-YYYY').format('DD-MM-YYYY');
   }
   const now = moment().utcOffset('+07:00');
   const startedTime = moment()
@@ -139,9 +139,9 @@ const getOrderDay = dayText => {
   return now.format('DD-MM-YYYY');
 };
 
-const getNextDay = dayText => {
+const getNextDay = (dayText, moreDays = 1) => {
   return moment(dayText, 'DD-MM-YYYY')
-    .add(1, 'day')
+    .add(moreDays, 'day')
     .format('DD-MM-YYYY');
 };
 
