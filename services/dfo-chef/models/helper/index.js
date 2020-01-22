@@ -14,7 +14,7 @@ const getMenuInfo = async (groupId, dayText) => {
   });
 
   let count = 0;
-  while (!menu && count <= 3) {
+  while (!menu && count <= 15) {
     count += 1;
     day = bot.getNextDay(day);
     // eslint-disable-next-line no-await-in-loop
