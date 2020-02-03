@@ -13,7 +13,7 @@ module.exports = async function Cancel(body) {
     const adminPower = isAdmin(from.id);
 
     if (mentionedUser) {
-      if (adminPower) {
+      if (!adminPower) {
         throw new Error(
           'Require admin permission to cancel the orders of this person'
         );
