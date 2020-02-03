@@ -29,7 +29,7 @@ module.exports = async function Cancel(body) {
     }
 
     if (bot.isOrderExpired() && !isAnotherDay) {
-      if (adminPower) {
+      if (!adminPower) {
         throw new Error('The order time is expired please contact Admin');
       }
     }
