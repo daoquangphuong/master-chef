@@ -2,11 +2,11 @@ const database = require('../models/database');
 const bot = require('../models/bot');
 const helper = require('../models/helper');
 
-module.exports = async function Summary(body) {
+module.exports = async function Summary(body, dayText) {
   try {
     const groupId = body.conversation.id;
 
-    const { day } = await helper.getMenuInfo(groupId);
+    const { day } = await helper.getMenuInfo(groupId, dayText);
 
     const orders = await database.Order.findAll({
       where: {
