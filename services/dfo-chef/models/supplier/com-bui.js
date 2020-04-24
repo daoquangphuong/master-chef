@@ -27,13 +27,18 @@ class ComBui {
 
     const days = [];
 
-    $('.ladi-group > div[id*="HEADLINE"]')
+    $('#SECTION26 .ladi-group > div[id*="HEADLINE"]')
       .toArray()
       .forEach(item => {
         const $item = $(item);
         const text = $item.text();
-
-        if (text && text.trim().indexOf('Thứ') === 0) {
+        if (
+          text &&
+          text
+            .trim()
+            .toLowerCase()
+            .indexOf('thứ') === 0
+        ) {
           days.push($item.parent());
         }
       });
