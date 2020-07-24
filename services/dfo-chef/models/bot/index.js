@@ -113,14 +113,14 @@ const isOrderExpired = () => {
   const expiredTime = moment()
     .utcOffset('+07:00')
     .startOf('day')
-    .hour(11);
+    .hour(20);
 
   const startedTime = moment()
     .utcOffset('+07:00')
     .startOf('day')
     .hour(12);
 
-  return now.isAfter(expiredTime) && now.isBefore(startedTime);
+  return now.isAfter(expiredTime) || now.isBefore(startedTime);
 };
 
 const getOrderDay = dayText => {
